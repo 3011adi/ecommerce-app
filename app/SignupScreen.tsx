@@ -2,12 +2,32 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import axios from 'axios'; // Ensure axios is imported
+
 export default function SignupScreen({ navigation }) {
-    const router =useRouter()
+  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [message, setMessage] = useState(''); // State to hold the response message
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('https://ecomstore-7nii.onrender.com/signup', {
+        name,
+        email,
+        password,
+      });
+
+      setMessage(response.data.message);
+      router.push("/"); // Navigate to the home screen on successful signup
+    } catch (error) {
+      setMessage(error.response.data.message);
+    }
+  };
 
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -15,13 +35,10 @@ export default function SignupScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-
-     
-
       {/* Logo and Title */}
       <View style={styles.logoContainer}>
         <Image
-          source={require("../assets/logo.png")} 
+          source={require("../assets/logo.png")}
           style={styles.logo}
         />
         <Text style={styles.loginTitle}>Sign Up</Text>
@@ -74,9 +91,12 @@ export default function SignupScreen({ navigation }) {
       </View>
 
       {/* Sign Up Button */}
-      <TouchableOpacity onPress={() => router.push("/")} >
-      <Text className="text-2xl bg-[#354E16] text-[#ffffff] w-32 text-center p-1 mx-2 rounded-3xl">submit</Text>
+      <TouchableOpacity onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+
+      {/* Response Message */}
+      {message ? <Text style={styles.messageText}>{message}</Text> : null}
 
       {/* Login Link */}
       <TouchableOpacity onPress={() => router.push("/LoginScreen")}>
@@ -118,7 +138,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    margintop: 0,
+    marginTop: 0,
     marginBottom: 20,
   },
   inputLabel: {
@@ -140,21 +160,19 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
-  submitButtonContainer: {
-    width: '60%',
-    marginTop: 50,
-    borderRadius: 10,
-  },
-  submitButton: {
-    borderRadius: 10,
-    padding: 13,
-    alignItems: 'center',
-    backgroundColor: '#354E16',
-  },
   submitButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 20,
+    backgroundColor: '#354E16',
+    color: '#ffffff',
+    width: 100,
+    textAlign: 'center',
+    padding: 10,
+    marginTop: 20,
+    borderRadius: 10,
+  },
+  messageText: {
+    color: 'red',
+    marginTop: 20,
   },
   linkText: {
     color: 'black',

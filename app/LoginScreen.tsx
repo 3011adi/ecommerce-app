@@ -1,21 +1,38 @@
-// screens/LoginScreen.js
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from "expo-router"
+import { useRouter } from "expo-router";
+import axios from 'axios'; // Ensure axios is imported
+
 export default function LoginScreen({ navigation }) {
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState(''); // Changed from name to email
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('https://ecomstore-7nii.onrender.com/signup/login', {
+        email,
+        password,
+      });
+
+      setMessage(response.data.message);
+      router.push("/"); // Navigate to the home screen on successful login
+    } catch (error) {
+      setMessage(error.response.data.message);
+    }
+  };
+
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
   };
+
   return (
     <View style={styles.container}>
-
-      
-
       {/* Logo and Title */}
       <View style={styles.logoContainer}>
         <Image
@@ -25,16 +42,16 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.loginTitle}>Login</Text>
       </View>
 
-      {/* Name Input */}
+      {/* Email Input */}
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Name</Text>
+        <Text style={styles.inputLabel}>Email</Text>
         <View style={styles.inputBox}>
-          <Ionicons name="person-outline" size={20} color="gray" style={styles.icon} />
+          <Ionicons name="mail-outline" size={20} color="gray" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Full Name"
-            value={name}
-            onChangeText={setName}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
       </View>
@@ -58,9 +75,12 @@ export default function LoginScreen({ navigation }) {
       </View>
 
       {/* Submit Button */}
-      <TouchableOpacity onPress={() => router.push("/")} >
-      <Text className="text-2xl bg-[#354E16] text-[#ffffff] w-32 text-center p-1 mx-2 rounded-3xl">submit</Text>
+      <TouchableOpacity onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+
+      {/* Response Message */}
+      {message ? <Text style={styles.messageText}>{message}</Text> : null}
 
       {/* Sign Up Link */}
       <TouchableOpacity onPress={() => router.push("/SignupScreen")}>
@@ -143,6 +163,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  messageText: {
+    color: 'red',
+    marginTop: 20,
   },
   linkText: {
     color: 'black',

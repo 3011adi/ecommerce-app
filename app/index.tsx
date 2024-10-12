@@ -22,6 +22,24 @@ const index = () => {
         setLoading(false);
       });
   }, []);
+
+  const addToCart = async (item) => {
+    try {
+      const newCartItem = {
+        seller: item.seller,
+        object: item.object,
+        price: item.price,
+        image: item.image,
+        upi: item.upi,
+      };
+
+      const response = await axios.post('https://ecomstore-7nii.onrender.com/cart', newCartItem);
+      console.log('Item added to cart:', response.data);
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+    }
+  };
+
   return (
     <View className="bg-[#f9faef]"> 
     <Nav/>
@@ -41,12 +59,10 @@ const index = () => {
             <View className=" p-3">
               <Text className=" text-3xl text-[#2f312a]">{item.object}</Text>
               <Text className="text-xl text-[#586249]">{item.price}</Text>
-              <TouchableOpacity>
-                <Text className="text-lg text-[#2a331e] bg-[#bfcbad] p-1 m-2 rounded-lg">Add to cart</Text>
+              <TouchableOpacity onPress={() => addToCart(item)} className="pt-8">
+                <Text className="text-lg text-[#2a331e] bg-[#bfcbad]  p-1 m-2 rounded-lg">Add to cart</Text>
               </TouchableOpacity>
-              <TouchableOpacity>
-                <Text className="text-lg bg-[#586249] text-[#ffffff] p-1 mx-2 rounded-lg">know more</Text>
-              </TouchableOpacity>
+            
             </View>
           </View>
         ))
