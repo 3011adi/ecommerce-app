@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
+import { Text, View, Image, ScrollView, ActivityIndicator, TouchableOpacity, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -41,6 +41,9 @@ const Cart = () => {
         setLoading(false);
       });
   }, []);
+  const handleBuyPress = (url) => {
+    Linking.openURL(url);
+  };
 
   return (
     <View className="bg-[#f9faef] pt-12">
@@ -58,6 +61,9 @@ const Cart = () => {
                   <Text className="text-3xl text-[#2f312a]">{item.object}</Text>
                   <Text className="text-xl text-[#586249]">{item.price}</Text>
                   <TouchableOpacity onPress={() => router.push(`/buy/${item._id}`)}>
+                    <Text className="text-lg text-[#2a331e] bg-[#bfcbad] px-3 m-2 w-16 rounded-3xl">buy</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity  onPress={() => handleBuyPress(`https://ecomstore-7nii.onrender.com/cart/${item._id}`)}>
                     <Text className="text-lg text-[#2a331e] bg-[#bfcbad] px-3 m-2 w-16 rounded-3xl">buy</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => deleteItem(item._id)}>
