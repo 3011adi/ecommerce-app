@@ -10,7 +10,7 @@ export default function Layout() {
       <Stack.Screen name="ForgotPasswordScreen" options={{ headerShown: false }} />
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="sell" options={{ headerShown: false }}/>
-      <Stack.Screen name="buy/:id"   options={{ headerShown: false }}/>
+      <Stack.Screen name="buy"   options={{ headerShown: false }}/>
       <Stack.Screen name="cart"   options={{ headerShown: false }} />
       <Stack.Screen name="jarvis"  options={{ headerShown: false }}  />
     </Stack>

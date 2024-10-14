@@ -41,7 +41,7 @@ const index = () => {
   };
 
   return (
-    <View className="bg-[#f9faef]"> 
+    <View className="bg-[#f9faef] mb-28"> 
     <Nav/>
     <ScrollView>
       

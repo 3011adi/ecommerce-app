@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, ActivityIndicator, TouchableOpacity, Linking } from "react-native";
+import { TouchableOpacity, Text, View, Image, ScrollView, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -7,17 +7,15 @@ const Cart = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   const deleteItem = async (id) => {
     try {
       setLoading(true);
       const response = await axios.delete(`https://ecomstore-7nii.onrender.com/cart/${id}`);
-
       if (response.status !== 200) {
         throw new Error('Error deleting item');
       }
-
-      // Remove the deleted item from the local state
       setItems(items.filter(item => item._id !== id));
       setLoading(false);
     } catch (err) {
@@ -25,8 +23,6 @@ const Cart = () => {
       setLoading(false);
     }
   };
-
-  const router = useRouter();
 
   useEffect(() => {
     setLoading(true);
@@ -41,15 +37,19 @@ const Cart = () => {
         setLoading(false);
       });
   }, []);
-  const handleBuyPress = (url) => {
-    Linking.openURL(url);
+
+  const handleBuy = (itemId) => {
+    router.push({
+      pathname: "/buy",
+      params: { itemId: itemId }
+    });
   };
 
   return (
-    <View className="bg-[#f9faef] pt-12">
-      <ScrollView>
+       <View className="bg-[#f9faef] flex-1 pt-12">
+      <ScrollView className="h-screen ">
         <Text className="text-5xl bg-[#f9faef] p-2 text-[#586249] px-8">Cart</Text>
-        <View className="grid grid-cols-2 items-center justify-center bg-[#f9faef]">
+        <View className="grid grid-cols-2 items-center justify-center  bg-[#f9faef]">
           {loading ? (
             <ActivityIndicator size="large" color="#00ff00" />
           ) : (
@@ -60,10 +60,7 @@ const Cart = () => {
                 <View className="p-3">
                   <Text className="text-3xl text-[#2f312a]">{item.object}</Text>
                   <Text className="text-xl text-[#586249]">{item.price}</Text>
-                  <TouchableOpacity onPress={() => router.push(`/buy/${item._id}`)}>
-                    <Text className="text-lg text-[#2a331e] bg-[#bfcbad] px-3 m-2 w-16 rounded-3xl">buy</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity  onPress={() => handleBuyPress(`https://ecomstore-7nii.onrender.com/cart/${item._id}`)}>
+                  <TouchableOpacity onPress={() => handleBuy(item._id)}>
                     <Text className="text-lg text-[#2a331e] bg-[#bfcbad] px-3 m-2 w-16 rounded-3xl">buy</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => deleteItem(item._id)}>
