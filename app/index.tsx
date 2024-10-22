@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Nav from "./Components/Nav";
 const index = () => {
+  
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   
@@ -41,7 +42,7 @@ const index = () => {
   };
 
   return (
-    <View className="bg-[#f9faef] mb-28"> 
+    <View className="bg-[#f9faef] mb-28 "> 
     <Nav/>
     <ScrollView>
       
