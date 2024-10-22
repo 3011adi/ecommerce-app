@@ -43,7 +43,9 @@ const index = () => {
 
   return (
     <View className="bg-[#f9faef] mb-28 "> 
+    <View className="bg-[#f9faef] p-3 "> 
     <Nav/>
+    </View>
     <ScrollView>
       
       <Text className="text-5xl bg-[#f9faef] p-2 text-[#586249] px-8">Shop</Text>
