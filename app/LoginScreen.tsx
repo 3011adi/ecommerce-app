@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import axios from 'axios'; // Ensure axios is imported
+import AsyncStorage from '@react-native-async-storage/async-storage';  // Add this import at the top
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState(''); // Changed from name to email
@@ -21,6 +22,7 @@ export default function LoginScreen({ navigation }) {
       });
 
       setMessage(response.data.message);
+      await AsyncStorage.setItem('userId', response.data.user.id.toString());  // Store userId using AsyncStorage
       router.push("/"); // Navigate to the home screen on successful login
     } catch (error) {
       setMessage(error.response.data.message);

@@ -3,6 +3,8 @@ import { useRouter } from "expo-router";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Nav from "./Components/Nav";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const index = () => {
   
   const [items, setItems] = useState([]);
@@ -26,6 +28,13 @@ const index = () => {
 
   const addToCart = async (item) => {
     try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) {
+        console.error('User not logged in');
+        router.push("/login");
+        return;
+      }
+
       const newCartItem = {
         seller: item.seller,
         object: item.object,
@@ -34,7 +43,7 @@ const index = () => {
         upi: item.upi,
       };
 
-      const response = await axios.post('https://ecomstore-7nii.onrender.com/cart', newCartItem);
+      const response = await axios.post(`https://ecomstore-7nii.onrender.com/cart/${userId}`, newCartItem);
       console.log('Item added to cart:', response.data);
     } catch (error) {
       console.error('Error adding item to cart:', error);

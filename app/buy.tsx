@@ -62,7 +62,7 @@ const Buy = () => {
         <ActivityIndicator size="large" color="#00ff00" />
       ) : (
         <View>
-          <Text className="text-center p-6 text-5xl  text-[#586249]">Buy</Text>
+          <Text className="text-center p-6 text-5xl  text-[#586249]">Bkuy</Text>
           <Text className="text-lg">Price: {cart.price}</Text>
           <Text className="text-lg">UPI ID: {cart.upi}</Text>
           <TouchableOpacity 

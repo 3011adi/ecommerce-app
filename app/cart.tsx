@@ -2,6 +2,7 @@ import { TouchableOpacity, Text, View, Image, ScrollView, ActivityIndicator } fr
 import { useRouter } from "expo-router";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Cart = () => {
   const [items, setItems] = useState([]);
@@ -25,17 +26,27 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get('https://ecomstore-7nii.onrender.com/cart')
-      .then((response) => {
+    const fetchCart = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+          setError('User not logged in');
+          router.push("/login");
+          return;
+        }
+
+        setLoading(true);
+        const response = await axios.get(`https://ecomstore-7nii.onrender.com/cart/${userId}`);
         setItems(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
+        setError(error.message);
         console.log(error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchCart();
   }, []);
 
   const handleBuy = (itemId) => {
