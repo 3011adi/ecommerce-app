@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { useLocalSearchParams } from 'expo-router';
 
 const Buy = () => {
-  const [cart, setCart] = useState({});
+  const [cartItem, setCartItem] = useState(null);
   const [loading, setLoading] = useState(false);
   const { itemId } = useLocalSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`https://ecomstore-7nii.onrender.com/cart/${itemId}`)
-      .then((response) => {
-        setCart(response.data);
+    const fetchCartItem = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+          console.error('User not logged in');
+          router.push('/login');
+          return;
+        }
+
+        setLoading(true);
+        const response = await axios.get(`https://ecomstore-7nii.onrender.com/cart/${userId}`);
+        const item = response.data.data.find(item => item._id === itemId);
+        setCartItem(item);
+      } catch (error) {
+        console.error('Error fetching cart item:', error);
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchCartItem();
   }, [itemId]);
 
   const parsePrice = (price) => {
@@ -27,30 +39,26 @@ const Buy = () => {
       return price.toString();
     }
     if (typeof price === 'string') {
-      const numericValue = price.replace(/[^\d.]/g, '');
-      return numericValue || '0';
+      return price.replace(/[^\d.]/g, '') || '0';
     }
     return '0';
   };
 
   const openGPay = () => {
-    const amount = parsePrice(cart.price);
-    const upiId = cart.upi || '';
-    const name =  cart.seller; // Replace with your actual merchant name
-        const note = `Payment for ${cart.object}`; // You can customize this
+    if (!cartItem) return;
 
-    // Construct the UPI payment URL
+    const amount = parsePrice(cartItem.price);
+    const upiId = cartItem.upi || '';
+    const name = cartItem.seller;
+    const note = `Payment for ${cartItem.object}`;
+
     const upiUrl = `upi://pay?pa=${upiId}&pn=${name}&am=${amount}&cu=INR&tn=${note}`;
-
-    // Construct the Google Pay web URL as fallback
     const webUrl = `https://pay.google.com/gp/v/send?pa=${upiId}&pn=${name}&am=${amount}&cu=INR&tn=${note}`;
 
-    // Try to open the GPay app first
     Linking.canOpenURL(upiUrl).then(supported => {
       if (supported) {
         Linking.openURL(upiUrl);
       } else {
-        // If GPay app is not installed, open the web URL
         Linking.openURL(webUrl);
       }
     }).catch(err => console.error('An error occurred', err));
@@ -59,26 +67,30 @@ const Buy = () => {
   return (
     <View style={{ padding: 32 }} className="bg-[#f9faef] min-h-screen">
       {loading ? (
-        <ActivityIndicator size="large" color="#00ff00" />
+        <ActivityIndicator size="large" color="#586249" />
       ) : (
         <View>
-          <Text className="text-center p-6 text-5xl  text-[#586249]">Bkuy</Text>
-          <Text className="text-lg">Price: {cart.price}</Text>
-          <Text className="text-lg">UPI ID: {cart.upi}</Text>
-          <TouchableOpacity 
-            onPress={openGPay}
-            
-                        style={{
-              backgroundColor: '#cdeda3',
+          <Text className="text-center p-6 text-5xl text-[#586249]">Buy Screen</Text>
+          {cartItem ? (
+            <View className="bg-white p-4 rounded-lg">
+              <Text className="text-lg mb-2">Item: {cartItem.object}</Text>
+              <Text className="text-lg mb-2">Price: ₹{cartItem.price}</Text>
+              <Text className="text-lg mb-2">UPI ID: {cartItem.upi}</Text>
+              <Text className="text-lg mb-2">Seller: {cartItem.seller}</Text>
               
-              padding: 10,
-              borderRadius: 20,
-              marginTop: 40, // Ensure marginTop is correctly applied
-              alignItems: 'center'
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 18 }}>Pay with GPay</Text>
-          </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={openGPay}
+                className="bg-[#cdeda3] p-4 rounded-lg mt-4"
+              >
+                <Text className="text-white text-center text-lg">Pay with GPay</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View>
+              <Text className="text-lg">Item ID: {itemId}</Text>
+              <Text className="text-lg text-red-500">Item not found in cart</Text>
+            </View>
+          )}
         </View>
       )}
     </View>
