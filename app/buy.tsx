@@ -70,25 +70,25 @@ const Buy = () => {
         <ActivityIndicator size="large" color="#586249" />
       ) : (
         <View>
-          <Text className="text-center p-6 text-5xl text-[#586249]">Buy Screen</Text>
+          <Text className="text-center p-6 text-5xl text-[#586249]">Buy </Text>
           {cartItem ? (
-            <View className="bg-white p-4 rounded-lg">
-              <Text className="text-lg mb-2">Item: {cartItem.object}</Text>
-              <Text className="text-lg mb-2">Price: ₹{cartItem.price}</Text>
-              <Text className="text-lg mb-2">UPI ID: {cartItem.upi}</Text>
-              <Text className="text-lg mb-2">Seller: {cartItem.seller}</Text>
+            <View className="bg-white p-6 rounded-lg shadow-md">
+              <Text className="text-xl font-bold mb-2 text-[#2f312a]">Item: {cartItem.object}</Text>
+              <Text className="text-lg mb-2 text-[#586249]">Price: ₹{cartItem.price}</Text>
+              <Text className="text-lg mb-2 text-gray-600">UPI ID: {cartItem.upi}</Text>
+              <Text className="text-lg mb-2 text-gray-600">Seller: {cartItem.seller}</Text>
               
               <TouchableOpacity 
                 onPress={openGPay}
                 className="bg-[#cdeda3] p-4 rounded-lg mt-4"
               >
-                <Text className="text-white text-center text-lg">Pay with GPay</Text>
+                <Text className="text-[#102000] text-center text-lg font-medium">Pay with GPay</Text>
               </TouchableOpacity>
             </View>
           ) : (
-            <View>
-              <Text className="text-lg">Item ID: {itemId}</Text>
-              <Text className="text-lg text-red-500">Item not found in cart</Text>
+            <View className="bg-white p-6 rounded-lg shadow-md">
+              <Text className="text-lg text-[#2f312a]">Item ID: {itemId}</Text>
+              <Text className="text-lg text-red-500 mt-2">Item not found in cart</Text>
             </View>
           )}
         </View>

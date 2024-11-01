@@ -77,7 +77,7 @@ export default function LoginScreen({ navigation }) {
       </View>
 
       {/* Submit Button */}
-      <TouchableOpacity onPress={handleSubmit}>
+      <TouchableOpacity onPress={handleSubmit} className="bg-[#354E16] px-5 p-2 rounded-lg ">
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
 
@@ -89,10 +89,6 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.linkText}>Don't have an account? Sign up</Text>
       </TouchableOpacity>
 
-      {/* Forgot Password Link */}
-      <TouchableOpacity onPress={() => router.push("/ForgotPasswordScreen")}>
-        <Text style={styles.linkText}>Forgot your password?</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -157,13 +153,13 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     borderRadius: 10,
-    padding: 13,
+    padding: 15,
     alignItems: 'center',
     backgroundColor: '#354E16',
   },
   submitButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   messageText: {
