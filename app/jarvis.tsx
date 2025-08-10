@@ -23,7 +23,7 @@ const Jarvis = () => {
 
   const client = new OpenAI({ 
     baseURL: "https://models.inference.ai.azure.com",
-    apiKey: "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",
+    apiKey: "",
     dangerouslyAllowBrowser: true
   });
 
